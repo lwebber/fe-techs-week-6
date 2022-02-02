@@ -15,12 +15,14 @@ class Book {
         this.author = author;
     }
 }
-
 class LibraryService {
     static url = 'https://crudcrud.com/api/f09d683076e241c3aeb84a4ab2dd6a52/libraries';
     
     static getAllLibraries(){
-        return $.get(this.url);
+        return $.ajax({
+            url: this.url,
+            type: 'GET'
+        });
     }
 
     static getLibrary(id){
@@ -62,6 +64,7 @@ class DOMManager {
     static getAllLibaries(){
         LibraryService.getAllLibraries()
             .then((libraries) => {
+            //console.log(libraries)
             this.render(libraries)
         });
     }
@@ -85,7 +88,7 @@ class DOMManager {
      static addBook(id){
         for(let library of this.libraries){
             if(library._id == id){
-                library.books.push(new Book($(`#${library._id}-book-name`).val(), $(`#${library._id}-book-author`).val()))
+                library.books.push(new Book($(`#${library._id}-book-title`).val(), $(`#${library._id}-book-author`).val()))
                 LibraryService.updateLibrary(library)
                 .then(() => {
                     return LibraryService.getAllLibraries();
@@ -99,7 +102,7 @@ class DOMManager {
         for(let library of this.libraries){
             if(library._id = libraryId){
                 for(let book of library.books){
-                    if(book._id = bookId){
+                    if(book.title = bookId){
                         library.books.splice(library.books.indexOf(book), 1);
                         LibraryService.updateLibrary(library)
                         .then(() => {
@@ -126,7 +129,7 @@ class DOMManager {
                     <div class="card">
                         <div class="row">
                             <div class="col-sm">
-                                <input type="text" id="${library._id}-book-name" class="form-control" placeholder="Book Name">
+                                <input type="text" id="${library._id}-book-title" class="form-control" placeholder="Book Title">
                             </div>
                             <div class="col-sm">
                                 <input type="text" id="${library._id}-book-author" class="form-control" placeholder="Book Author">
@@ -140,9 +143,9 @@ class DOMManager {
             for(let book of library.books){
                 $(`#${library._id}`).find('.card-body').append(
                     `<p>
-                    <span id="name-${book._id}"><strong>Name: </strong> ${book.name}</span>
-                    <span id="area-${book._id}"><strong>Area: </strong> ${book.author}</span>
-                    <button class="btn btn-danger" onclick="DOMManager.deleteBook('${library._id}', '${book._id}')">Delete Book</button>
+                    <span id="title-${book.title}"><strong>Title: </strong> ${book.title}</span>
+                    <span id="author-${book.author}"><strong>Author: </strong> ${book.author}</span>
+                    <button class="btn btn-danger" onclick="DOMManager.deleteBook('${library._id}', '${book.title}')">Delete Book</button>
                     </p>`
                 );
             }
@@ -156,8 +159,7 @@ $('#create-new-library').click(() => {
     $('#new-library-name').val('');
 });
 
-DOMManager.getAllLibraries();
-
+DOMManager.getAllLibaries();
 
 
 
