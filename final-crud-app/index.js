@@ -4,7 +4,7 @@ class Library {
         this.books = [];
     }
 
-    addRoom(title, author){
+    addBook(title, author){
         this.books.push(new Book(title, author));
     }
 }
@@ -28,7 +28,13 @@ class LibraryService {
     }
 
     static createLibrary(library){
-        return $.post(this.url, library)
+        return $.ajax({
+            url: this.url,
+            dataType: 'json',
+            data: JSON.stringify(library),
+            contentType: 'application/json',
+            type: 'POST'
+        });
     }
 
   static updateLibrary(library){
@@ -51,29 +57,32 @@ class LibraryService {
 
 
 class DOMManager {
-    static libraries;
+    static libraries = [];
 
     static getAllLibaries(){
-        LibraryService.getAllLibraries().then(libraries => this.render(libraries));
+        LibraryService.getAllLibraries()
+            .then((libraries) => {
+            this.render(libraries)
+        });
     }
 
     static createLibrary(name){
-        HouseService.createLibrary(new Library(name))
+        LibraryService.createLibrary(new Library(name))
         .then(() => {
             return LibraryService.getAllLibraries();
         })
         .then((libraries) => this.render(libraries));
     }
 
-    static deleteLibrary(id){
-        HouseService.deleteLibrary(id)
+     static deleteLibrary(id){
+        LibraryService.deleteLibrary(id)
         .then(() => {
             return LibraryService.getAllLibraries();
         })
         .then((libraries) => this.render(libraries));
-    }
+    } 
 
-    static addBook(id){
+     static addBook(id){
         for(let library of this.libraries){
             if(library._id == id){
                 library.books.push(new Book($(`#${library._id}-book-name`).val(), $(`#${library._id}-book-author`).val()))
@@ -84,7 +93,7 @@ class DOMManager {
                 .then((libraries) => this.render(libraries));
             }
         }
-    }
+    } 
 
     static deleteBook(libraryId, bookId){
         for(let library of this.libraries){
@@ -101,7 +110,7 @@ class DOMManager {
                 }
             }
         }
-    }
+    } 
 
     static render(libraries){
         this.libraries = libraries;
@@ -111,16 +120,16 @@ class DOMManager {
               `<div id="${library._id}" class="card">
                 <div class="card-header">
                     <h2>${library.name}</h2>
-            <button class="btn btn-danger" onclick="DOMManager.deleteHouse('${library._id}')">Delete</button>
+            <button class="btn btn-danger" onclick="DOMManager.deleteLibrary('${library._id}')">Delete</button>
                 </div>
                 <div class="card-body">
                     <div class="card">
                         <div class="row">
                             <div class="col-sm">
-                                <input type="text" id="${library._id}-book-name" class="form-control" placeholder="Room Name">
+                                <input type="text" id="${library._id}-book-name" class="form-control" placeholder="Book Name">
                             </div>
                             <div class="col-sm">
-                                <input type="text" id="${library._id}-book-author" class="form-control" placeholder="Room Area">
+                                <input type="text" id="${library._id}-book-author" class="form-control" placeholder="Book Author">
                             </div>
                         </div>
                         <button id="${library._id}-new-book" onclick="DOMManager.addBook('${library._id}')" class="btn btn-primary form-control">Add</button>
@@ -133,7 +142,7 @@ class DOMManager {
                     `<p>
                     <span id="name-${book._id}"><strong>Name: </strong> ${book.name}</span>
                     <span id="area-${book._id}"><strong>Area: </strong> ${book.author}</span>
-                    <button class="btn btn-danger" onclick="DOMManager.deleteRoom('${library._id}', '${book._id}')">Delete Book</button>
+                    <button class="btn btn-danger" onclick="DOMManager.deleteBook('${library._id}', '${book._id}')">Delete Book</button>
                     </p>`
                 );
             }
@@ -141,10 +150,14 @@ class DOMManager {
     }
 }
 
+
 $('#create-new-library').click(() => {
     DOMManager.createLibrary($('#new-library-name').val());
-    $('new-library-name').val('');
+    $('#new-library-name').val('');
 });
 
 DOMManager.getAllLibraries();
+
+
+
 
