@@ -87,9 +87,9 @@ class DOMManager {
 
     static deleteRoom(houseId, roomId){
         for(let house of this.houses){
-            if(house._id = houseId){
+            if(house._id == houseId){
                 for(let room of house.rooms){
-                    if(room._id = roomId){
+                    if(room._id == roomId){
                         house.rooms.splice(house.rooms.indexOf(room), 1);
                         HouseService.updateHouse(house)
                         .then(() => {
