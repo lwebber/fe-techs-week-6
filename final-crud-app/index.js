@@ -16,17 +16,14 @@ class Book {
     }
 }
 class LibraryService {
-    static url = 'https://crudcrud.com/api/f09d683076e241c3aeb84a4ab2dd6a52/libraries';
+    static url = "https://crudcrud.com/api/f09d683076e241c3aeb84a4ab2dd6a52/libraries";
     
-    static getAllLibraries(){
-        return $.ajax({
-            url: this.url,
-            type: 'GET'
-        });
-    }
-
     static getLibrary(id){
         return $.get(this.url+ `/${id}`)
+    }
+
+    static getAllLibraries(){
+        return $.get(this.url);
     }
 
     static createLibrary(library){
