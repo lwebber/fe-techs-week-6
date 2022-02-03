@@ -16,7 +16,7 @@ class Book {
     }
 }
 class LibraryService {
-    static url = "https://crudcrud.com/api/f09d683076e241c3aeb84a4ab2dd6a52/libraries";
+    static url = "https://crudcrud.com/api/83ea6cf81d8a432884800426221c36e4/libraries";
     
     static getLibrary(id){
         return $.get(this.url+ `/${id}`)
