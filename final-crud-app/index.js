@@ -16,7 +16,7 @@ class Book {
     }
 }
 class LibraryService {
-    static url = "https://crudcrud.com/api/83ea6cf81d8a432884800426221c36e4/libraries";
+    static url = "https://61fda0b1a58a4e00173c9609.mockapi.io/api/v1/Library";
     
     static getLibrary(id){
         return $.get(this.url+ `/${id}`)
@@ -38,7 +38,7 @@ class LibraryService {
 
   static updateLibrary(library){
         return $.ajax({
-            url: this.url + `/${library._id}`,
+            url: this.url + `/${library.id}`,
             dataType: 'json',
             data: JSON.stringify(library),
             contentType: 'application/json',
@@ -84,8 +84,8 @@ class DOMManager {
 
      static addBook(id){
         for(let library of this.libraries){
-            if(library._id == id){
-                library.books.push(new Book($(`#${library._id}-book-title`).val(), $(`#${library._id}-book-author`).val()))
+            if(library.id == id){
+                library.books.push(new Book($(`#${library.id}-book-title`).val(), $(`#${library.id}-book-author`).val()))
                 LibraryService.updateLibrary(library)
                 .then(() => {
                     return LibraryService.getAllLibraries();
@@ -97,7 +97,7 @@ class DOMManager {
 
     static deleteBook(libraryId, bookId){
         for(let library of this.libraries){
-            if(library._id = libraryId){
+            if(library.id = libraryId){
                 for(let book of library.books){
                     if(book.title = bookId){
                         library.books.splice(library.books.indexOf(book), 1);
@@ -117,32 +117,32 @@ class DOMManager {
         $('#app').empty();
         for(let library of libraries){
             $('#app').prepend(
-              `<div id="${library._id}" class="card">
+              `<div id="${library.id}" class="card">
                 <div class="card-header">
                     <h2>${library.name}</h2>
-            <button class="btn btn-danger" onclick="DOMManager.deleteLibrary('${library._id}')">Delete</button>
+            <button class="btn btn-danger" onclick="DOMManager.deleteLibrary('${library.id}')">Delete</button>
                 </div>
                 <div class="card-body">
                     <div class="card">
                         <div class="row">
                             <div class="col-sm">
-                                <input type="text" id="${library._id}-book-title" class="form-control" placeholder="Book Title">
+                                <input type="text" id="${library.id}-book-title" class="form-control" placeholder="Book Title">
                             </div>
                             <div class="col-sm">
-                                <input type="text" id="${library._id}-book-author" class="form-control" placeholder="Book Author">
+                                <input type="text" id="${library.id}-book-author" class="form-control" placeholder="Book Author">
                             </div>
                         </div>
-                        <button id="${library._id}-new-book" onclick="DOMManager.addBook('${library._id}')" class="btn btn-primary form-control">Add</button>
+                        <button id="${library.id}-new-book" onclick="DOMManager.addBook('${library.id}')" class="btn btn-primary form-control">Add</button>
                     </div>
                 </div>
               </div><br>` 
             );
             for(let book of library.books){
-                $(`#${library._id}`).find('.card-body').append(
+                $(`#${library.id}`).find('.card-body').append(
                     `<p>
                     <span id="title-${book.title}"><strong>Title: </strong> ${book.title}</span>
                     <span id="author-${book.author}"><strong>Author: </strong> ${book.author}</span>
-                    <button class="btn btn-danger" onclick="DOMManager.deleteBook('${library._id}', '${book.title}')">Delete Book</button>
+                    <button class="btn btn-danger" onclick="DOMManager.deleteBook('${library.id}', '${book.title}')">Delete Book</button>
                     </p>`
                 );
             }
